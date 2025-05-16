@@ -1,0 +1,35 @@
+name: Flutter Build für Windows
+
+on:
+  workflow_dispatch:  # Manuell startbar über GitHub UI
+  push:               # Oder bei jedem Push
+
+jobs:
+  build-windows:
+    runs-on: self-hosted  # dein Windows-Runner mit Flutter installiert
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Flutter Version prüfen
+        run: flutter --version
+        shell: cmd
+
+      - name: Abhängigkeiten holen
+        run: flutter pub get
+        shell: cmd
+
+      - name: Windows Build ausführen
+        run: flutter build windows
+        shell: cmd
+
+      - name: Baute .exe auflisten
+        run: dir build\windows\runner\Release
+        shell: cmd
+
+      - name: Baue .exe als Artefakt hoch
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Build
+          path: build/windows/runner/Release/*.exe
